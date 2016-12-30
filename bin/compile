@@ -1,25 +1,51 @@
 #!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir> <env-dir>
 
 BUILD_DIR=$1
 CACHE_DIR=$2
-LP_DIR=`cd $(dirname $0); cd ..; pwd`
+ENV_DIR=$3
 
-echo 'Installing Oracle Instant Client and SDK'
+indent() {
+    echo "       $*" || true
+}
 
-cd "$BUILD_DIR/vendor"
-wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocibasic.zip
-wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocisdk.zip
-unzip ocibasic.zip
-unzip ocisdk.zip
-cd instantclient_12_1
-ln -s libclntsh.so.12.1 libclntsh.so
+VENDOR_DIR=$BUILD_DIR/vendor
+ORACLE_DIR=$VENDOR_DIR/oracle
+INSTANTCLIENT_DIR=$ORACLE_DIR/instantclient_12_1
+PROFILE_D_DIR=$BUILD_DIR/.profile.d
 
-mkdir -p $BUILD_DIR/.profile.d
-cat <<EOF >$BUILD_DIR/.profile.d/oracle.sh
+BASIC_FILENAME=instantclient-basic-linux.x64-12.1.0.2.0.zip
+SDK_FILENAME=instantclient-sdk-linux.x64-12.1.0.2.0.zip
+
+MIRROR=http://michaelbuhler.com
+
+if [ ! -f $CACHE_DIR/$BASIC_FILENAME ]; then
+    indent "Downloading $BASIC_FILENAME..."
+    curl -# -o $CACHE_DIR/$BASIC_FILENAME $MIRROR/$BASIC_FILENAME
+fi
+
+if [ ! -f $CACHE_DIR/$SDK_FILENAME ]; then
+    indent "Downloading $SDK_FILENAME..."
+    curl -# -o $CACHE_DIR/$SDK_FILENAME $MIRROR/$SDK_FILENAME
+fi
+
+mkdir -p $ORACLE_DIR
+indent "Extracting $BASIC_FILENAME..."
+unzip -qq $CACHE_DIR/$BASIC_FILENAME -d $ORACLE_DIR
+indent "Extracting $SDK_FILENAME..."
+unzip -qq $CACHE_DIR/$SDK_FILENAME -d $ORACLE_DIR
+
+indent "Symlinking libclntsh.so..."
+ln -s libclntsh.so.12.1 $INSTANTCLIENT_DIR/libclntsh.so
+
+export OCI_LIB_DIR=$INSTANTCLIENT_DIR
+export OCI_INC_DIR=$INSTANTCLIENT_DIR/sdk/include
+
+indent "Saving environment setup script..."
+mkdir -p $PROFILE_D_DIR
+cat << EOF > $PROFILE_D_DIR/oracle.sh
 #!/usr/bin/env bash
-export LD_LIBRARY_PATH="\$BUILD_DIR/vendor/instantclient_12_1:\$HOME/.apt/lib/x86_64-linux-gnu:\$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:$HOME/.apt/lib/x86_64-linux-gnu:$HOME/vendor/oracle/instantclient_12_1"
 EOF
 
-export LD_LIBRARY_PATH="$BUILD_DIR/vendor/instantclient_12_1:$HOME/.apt/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
-
-export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH|PKG_CONFIG_PATH)='  > "$LP_DIR/export"
+indent "Done."
