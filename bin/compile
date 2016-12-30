@@ -25,11 +25,8 @@ unless $?.success?
 end
 
 indent 'Setting LD_LIBRARY_PATH'
-
-`mkdir -p #{BUILD_DIR}/.profile.d`
-
-open("#{BUILD_DIR}/.profile.d/oracle.sh", "w") do |f|
-  f.puts "export LD_LIBRARY_PATH=#{BUILD_DIR}/vendor/instantclient_12_1/"
-end
+`export LD_LIBRARY_PATH=#{BUILD_DIR}/vendor/instantclient_12_1/`
+indent 'LD_LIBRARY_PATH set to:'
+`echo $LD_LIBRARY_PATH`
 
 indent "Done."
