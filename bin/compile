@@ -15,10 +15,10 @@ end
 puts "-----> Found a .oracle.ini"
 
 indent "Downloading file from AWS..."
-result = `cd #{BUILD_DIR}/vendor; wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocibasic.zip`
+result = `cd #{BUILD_DIR}/vendor; wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocibasic.zip; wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocisdk.zip`
 
 indent "Unpacking and Syslinking..."
-result = `cd #{BUILD_DIR}/vendor; unzip ocibasic.zip; cd instantclient_12_1; ln -s libclntsh.so.12.1 libclntsh.so`
+result = `cd #{BUILD_DIR}/vendor; unzip ocibasic.zip; unzip ocisdk.zip; cd instantclient_12_1; ln -s libclntsh.so.12.1 libclntsh.so`
 
 unless $?.success?
   indent "Failure while downloading OCI8 archive: #{$?}"
@@ -28,7 +28,7 @@ end
 indent 'Setting LD_LIBRARY_PATH'
 
 open(File.join(ENV_DIR,'LD_LIBRARY_PATH'), 'w') do |f|
-  f.puts "#{BUILD_DIR}/vendor/instantclient_12_1/"
+  f.puts "#{BUILD_DIR}/vendor/instantclient_12_1"
 end
 
 indent "Done."
