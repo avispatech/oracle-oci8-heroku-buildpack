@@ -28,7 +28,7 @@ end
 indent 'Setting LD_LIBRARY_PATH'
 
 open(File.join(ENV_DIR,'LD_LIBRARY_PATH'), 'w') do |f|
-  f.puts "#{BUILD_DIR}/vendor/instantclient_12_1"
+  f.puts "$HOME/.apt/lib/x86_64-linux-gnu:#{BUILD_DIR}/vendor/instantclient_12_1"
 end
 
 indent "Done."
