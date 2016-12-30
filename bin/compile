@@ -16,6 +16,7 @@ ln -s libclntsh.so.12.1 libclntsh.so
 
 mkdir -p $BUILD_DIR/.profile.d
 cat <<EOF >$BUILD_DIR/.profile.d/oracle.sh
+#!/usr/bin/env bash
 export LD_LIBRARY_PATH="\$BUILD_DIR/vendor/instantclient_12_1:\$HOME/.apt/lib/x86_64-linux-gnu:\$LD_LIBRARY_PATH"
 EOF
 
