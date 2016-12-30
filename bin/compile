@@ -2,10 +2,11 @@
 
 BUILD_DIR=$1
 CACHE_DIR=$2
-ENV_DIR=$3
 LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
-echo 'Downloading Oracle Instant Client and SDK from AWS'
+echo 'Installing Oracle Instant Client and SDK'
+echo $LD_LIBRARY_PATH
+
 cd "$BUILD_DIR/vendor"
 wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocibasic.zip
 wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocisdk.zip
