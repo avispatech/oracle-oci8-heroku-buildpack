@@ -14,10 +14,10 @@ ORACLE_DIR=$VENDOR_DIR/oracle
 INSTANTCLIENT_DIR=$ORACLE_DIR/instantclient_12_1
 PROFILE_D_DIR=$BUILD_DIR/.profile.d
 
-BASIC_FILENAME=instantclient-basic-linux.x64-12.1.0.2.0.zip
-SDK_FILENAME=instantclient-sdk-linux.x64-12.1.0.2.0.zip
+BASIC_FILENAME=ocibasic.zip
+SDK_FILENAME=ocisdk.zip
 
-MIRROR=http://michaelbuhler.com
+MIRROR=https://s3.amazonaws.com/heroku-oracle-buildpack
 
 if [ ! -f $CACHE_DIR/$BASIC_FILENAME ]; then
     indent "Downloading $BASIC_FILENAME..."
