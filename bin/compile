@@ -5,7 +5,6 @@ CACHE_DIR=$2
 LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
 echo 'Installing Oracle Instant Client and SDK'
-echo $LD_LIBRARY_PATH
 
 cd "$BUILD_DIR/vendor"
 wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocibasic.zip
@@ -17,9 +16,9 @@ ln -s libclntsh.so.12.1 libclntsh.so
 
 mkdir -p $BUILD_DIR/.profile.d
 cat <<EOF >$BUILD_DIR/.profile.d/oracle.sh
-export LD_LIBRARY_PATH="\$BUILD_DIR/vendor/instantclient_12_1:\$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="\$BUILD_DIR/vendor/instantclient_12_1:\$HOME/.apt/lib/x86_64-linux-gnu:\$LD_LIBRARY_PATH"
 EOF
 
-export LD_LIBRARY_PATH="$BUILD_DIR/vendor/instantclient_12_1:$LD_LIBRARY_PATH"
+export LD_LIBRARY_PATH="$BUILD_DIR/vendor/instantclient_12_1:$HOME/.apt/lib/x86_64-linux-gnu:$LD_LIBRARY_PATH"
 
 export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH|PKG_CONFIG_PATH)='  > "$LP_DIR/export"
