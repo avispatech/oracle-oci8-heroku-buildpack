@@ -3,6 +3,7 @@
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
+LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
 echo 'Downloading Oracle Instant Client and SDK from AWS'
 cd "$BUILD_DIR/vendor"
@@ -19,3 +20,5 @@ export LD_LIBRARY_PATH="\$BUILD_DIR/vendor/instantclient_12_1:\$LD_LIBRARY_PATH"
 EOF
 
 export LD_LIBRARY_PATH="\$BUILD_DIR/vendor/instantclient_12_1:\$LD_LIBRARY_PATH"
+
+export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH|PKG_CONFIG_PATH)='  > "$LP_DIR/export"
