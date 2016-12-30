@@ -6,6 +6,7 @@ require 'fileutils'
 $stdout.sync = true
 
 BUILD_DIR = ARGV[0]
+ENV_DIR = ARGV[2]
 
 def indent msg
   puts "       #{msg}"
@@ -25,8 +26,9 @@ unless $?.success?
 end
 
 indent 'Setting LD_LIBRARY_PATH'
-`export LD_LIBRARY_PATH=#{BUILD_DIR}/vendor/instantclient_12_1/`
-indent 'LD_LIBRARY_PATH set to:'
-`echo $LD_LIBRARY_PATH`
+
+open(File.join(ENV_DIR,'LD_LIBRARY_PATH'), 'w') do |f|
+  f.puts "#{BUILD_DIR}/vendor/instantclient_12_1/"
+end
 
 indent "Done."
