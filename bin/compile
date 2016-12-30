@@ -1,34 +1,21 @@
-#!/usr/bin/env ruby
+#!/usr/bin/env bash
 
-require 'tempfile'
-require 'fileutils'
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
 
-$stdout.sync = true
+echo 'Downloading Oracle Instant Client and SDK from AWS'
+cd "$BUILD_DIR/vendor"
+wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocibasic.zip
+wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocisdk.zip
+unzip ocibasic.zip
+unzip ocisdk.zip
+cd instantclient_12_1
+ln -s libclntsh.so.12.1 libclntsh.so
 
-BUILD_DIR = ARGV[0]
-ENV_DIR = ARGV[2]
+mkdir -p $BUILD_DIR/.profile.d
+cat <<EOF >$BUILD_DIR/.profile.d/oracle.sh
+export LD_LIBRARY_PATH="\$BUILD_DIR/vendor/instantclient_12_1:\$LD_LIBRARY_PATH"
+EOF
 
-def indent msg
-  puts "       #{msg}"
-end
-
-puts "-----> Found a .oracle.ini"
-
-indent "Downloading file from AWS..."
-result = `cd #{BUILD_DIR}/vendor; wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocibasic.zip; wget --quiet https://s3.amazonaws.com/heroku-oracle-buildpack/ocisdk.zip`
-
-indent "Unpacking and Syslinking..."
-result = `cd #{BUILD_DIR}/vendor; unzip ocibasic.zip; unzip ocisdk.zip; cd instantclient_12_1; ln -s libclntsh.so.12.1 libclntsh.so`
-
-unless $?.success?
-  indent "Failure while downloading OCI8 archive: #{$?}"
-  exit 1
-end
-
-indent 'Setting LD_LIBRARY_PATH'
-
-open(File.join(ENV_DIR,'LD_LIBRARY_PATH'), 'w') do |f|
-  f.puts "$HOME/.apt/lib/x86_64-linux-gnu:#{BUILD_DIR}/vendor/instantclient_12_1"
-end
-
-indent "Done."
+export LD_LIBRARY_PATH="\$BUILD_DIR/vendor/instantclient_12_1:\$LD_LIBRARY_PATH"
