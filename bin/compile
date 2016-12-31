@@ -3,6 +3,7 @@
 BUILD_DIR=$1
 CACHE_DIR=$2
 ENV_DIR=$3
+LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
 indent() {
     echo "       $*" || true
@@ -46,5 +47,9 @@ cat << EOF > $PROFILE_D_DIR/oracle.sh
 #!/usr/bin/env bash
 export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:$HOME/.apt/lib/x86_64-linux-gnu:$HOME/vendor/oracle/instantclient_12_1"
 EOF
+
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:$HOME/.apt/lib/x86_64-linux-gnu:$HOME/vendor/oracle/instantclient_12_1"
+
+export | grep -E -e ' (PATH|LD_LIBRARY_PATH|LIBRARY_PATH|INCLUDE_PATH|CPATH|CPPPATH|PKG_CONFIG_PATH)='  > "$LP_DIR/export"
 
 indent "Done."
