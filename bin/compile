@@ -51,4 +51,6 @@ EOF
 
 export LD_LIBRARY_PATH="/void"
 
+export | grep -E -e ' (LD_LIBRARY_PATH)='  > "$LP_DIR/export"
+
 indent "Done."
