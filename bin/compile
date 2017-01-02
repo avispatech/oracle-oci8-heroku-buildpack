@@ -49,4 +49,6 @@ export LD_LIBRARY_PATH="\$LD_LIBRARY_PATH:\$HOME/.apt/lib/x86_64-linux-gnu:\$HOM
 export LD_LIBRARY_PATH="/void"
 EOF
 
+export LD_LIBRARY_PATH="/void"
+
 indent "Done."
